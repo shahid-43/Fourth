@@ -1,13 +1,17 @@
 module Main where
 
--- Running: runaskell Main.hs path_to_test_file
-
+import System.Environment (getArgs)
 import Interpret
-import System.Environment
 
 main :: IO ()
 main = do
-    (fileName:tl) <- getArgs
-    contents <- readFile fileName
-    let (stack, output) = interpret contents 
-    putStrLn output
+    args <- getArgs
+    case args of
+        (fileName : _) -> do
+            contents <- readFile fileName
+            let (stack, output) = interpret contents
+            putStrLn output
+            if null stack
+                then putStrLn "Execution finished with an empty stack."
+                else putStrLn ("Stack content: " ++ show stack)
+        _ -> putStrLn "Error: No input file provided."
